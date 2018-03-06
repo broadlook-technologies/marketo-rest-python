@@ -19,7 +19,7 @@ class MarketoClient:
     scope = None
     last_request_id = None # intended to save last request id, but not used right now
 
-    def __init__(self, munchkin_id, client_id, client_secret, api_limit=None):
+    def __init__(self, munchkin_id, client_id, client_secret, api_limit=None, partner_id=None):
         assert(munchkin_id is not None)
         assert(client_id is not None)
         assert(client_secret is not None)
@@ -27,6 +27,7 @@ class MarketoClient:
         self.host = "https://" + munchkin_id + ".mktorest.com"
         self.client_id = client_id
         self.client_secret = client_secret
+        self.partner_id = partner_id
         self.API_CALLS_MADE = 0
         self.API_LIMIT = api_limit
 
@@ -258,6 +259,8 @@ class MarketoClient:
             'client_id': self.client_id,
             'client_secret': self.client_secret
         }
+        if self.partner_id:
+            args['partner_id'] = self.partner_id
         data = self._api_call('get', self.host + "/identity/oauth/token", args)
         if data is None: raise Exception("Empty Response")
         if 'error' in data:
