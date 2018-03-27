@@ -36,7 +36,7 @@ class HttpLib:
                 pr.prepare_url(endpoint, args)
                 if len(pr.url)>7000:
                     args['_method'] = 'GET'
-                    r = requests.post(endpoint, params=args, headers=headers)
+                    r = requests.post(endpoint, data=args, headers=headers)
                 else:
                     r = requests.get(endpoint, params=args, headers=headers)
                 if mode is 'nojson':
