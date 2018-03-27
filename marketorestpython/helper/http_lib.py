@@ -1,6 +1,7 @@
 import requests
 import time
 import mimetypes
+from requests.models import PreparedRequest
 
 class HttpLib:
     max_retries = 3
@@ -30,7 +31,14 @@ class HttpLib:
                 return None
             try:
                 headers = {'Accept-Encoding': 'gzip'}
-                r = requests.get(endpoint, params=args, headers=headers)
+
+                pr = PreparedRequest()
+                pr.prepare_url(endpoint, args)
+                if len(pr.url)>7000:
+                    args['_method'] = 'GET'
+                    r = requests.post(endpoint, params=args, headers=headers)
+                else:
+                    r = requests.get(endpoint, params=args, headers=headers)
                 if mode is 'nojson':
                     return r
                 else:
