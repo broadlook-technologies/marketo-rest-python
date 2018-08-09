@@ -1,6 +1,7 @@
 import requests
 import time
 import mimetypes
+import logging
 from requests.models import PreparedRequest
 
 class HttpLib:
@@ -39,6 +40,10 @@ class HttpLib:
                     r = requests.post(endpoint, data=args, headers=headers)
                 else:
                     r = requests.get(endpoint, params=args, headers=headers)
+
+                requests_log = logging.getLogger("requests.packages.urllib3")
+                requests_log.debug('content: %s', r.content)
+
                 if mode is 'nojson':
                     return r
                 else:
