@@ -19,7 +19,7 @@ class MarketoClient:
     scope = None
     last_request_id = None # intended to save last request id, but not used right now
 
-    def __init__(self, munchkin_id, client_id, client_secret, api_limit=None, partner_id=None):
+    def __init__(self, munchkin_id, client_id, client_secret, api_limit=None, partner_id=None, logbook_logger = None):
         assert(munchkin_id is not None)
         assert(client_id is not None)
         assert(client_secret is not None)
@@ -30,9 +30,11 @@ class MarketoClient:
         self.partner_id = partner_id
         self.API_CALLS_MADE = 0
         self.API_LIMIT = api_limit
+        self.logbook_logger = logbook_logger
+
 
     def _api_call(self, method, endpoint, *args, **kwargs):
-        request = HttpLib()
+        request = HttpLib(self.logbook_logger)
         result = getattr(request, method)(endpoint, *args, **kwargs)
         self.API_CALLS_MADE += 1
         if self.API_LIMIT and self.API_CALLS_MADE >= self.API_LIMIT:
