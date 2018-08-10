@@ -87,7 +87,7 @@ class HttpLib:
                     #if '/identity/oauth/token' not in endpoint:
                     #    r_json = json.loads("{\"requestId\":\"5576#16523a39ed7\",\"success\":false,\"errors\":[{\"code\":\"606\",\"message\":\"Max rate limit '100' exceeded with in '20' secs\"}]}")
                     # faking HTTP exception
-                    raise requests.exceptions.Timeout('test timeout exception')
+                    #raise requests.exceptions.Timeout('test timeout exception')
 
                     # faking other exception
                     #raise Exception('test exception')
