@@ -8,7 +8,6 @@ from requests.models import PreparedRequest
 class HttpLib:
     max_retries = 3
     sleep_duration = 10
-    num_calls_per_second = 5  # can run five times per second at most (at 100/20 rate limit)
     def __init__(self, logbook_logger = None):
         self.logbook_logger = logbook_logger
 
@@ -19,33 +18,16 @@ class HttpLib:
             print message
 
 
-    def _rate_limited(maxPerSecond):
-        minInterval = 1.0 / float(maxPerSecond)
-        def decorate(func):
-            lastTimeCalled = [0.0]
-            def rateLimitedFunction(*args,**kargs):
-                elapsed = time.clock() - lastTimeCalled[0]
-                leftToWait = minInterval - elapsed
-                if leftToWait>0:
-                    time.sleep(leftToWait)
-                ret = func(*args,**kargs)
-                lastTimeCalled[0] = time.clock()
-                return ret
-            return rateLimitedFunction
-        return decorate
-
     def get(self, endpoint, args=None, mode=None):
         return self._request('GET', endpoint, args, mode)
 
     def post(self, endpoint, args, data=None, files=None, filename=None, mode=None):
         return self._request('POST', endpoint, args, mode, data, files, filename)
 
-    @_rate_limited(num_calls_per_second)
     def delete(self, endpoint, args, data):
         return self._request('DELETE', endpoint, args, None, data)
 
 
-    @_rate_limited(num_calls_per_second)
     def _request(self, method, endpoint, args=None, mode=None, data=None, files=None, filename=None):
         retries = 1
         while True:

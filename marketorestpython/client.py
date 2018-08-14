@@ -18,6 +18,7 @@ class MarketoClient:
     token_type = None
     scope = None
     last_request_id = None # intended to save last request id, but not used right now
+    last_rate_limit_call = 0.0
 
     def __init__(self, munchkin_id, client_id, client_secret, api_limit=None, partner_id=None, logbook_logger = None):
         assert(munchkin_id is not None)
@@ -32,9 +33,17 @@ class MarketoClient:
         self.API_LIMIT = api_limit
         self.logbook_logger = logbook_logger
 
+    def _check_rate_limit(self):
+        minInterval = 1.0 / float(5) # can run five times per second at most (at 100/20 rate limit)
+        elapsed = time.time() - self.last_rate_limit_call
+        leftToWait = minInterval - elapsed
+        if leftToWait > 0:
+            time.sleep(leftToWait)
+        self.last_rate_limit_call = time.time()
 
     def _api_call(self, method, endpoint, *args, **kwargs):
         request = HttpLib(self.logbook_logger)
+        self._check_rate_limit()
         result = getattr(request, method)(endpoint, *args, **kwargs)
         self.API_CALLS_MADE += 1
         if self.API_LIMIT and self.API_CALLS_MADE >= self.API_LIMIT:
