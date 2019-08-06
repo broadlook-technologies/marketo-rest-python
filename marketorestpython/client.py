@@ -277,11 +277,14 @@ class MarketoClient:
         if 'error' in data:
             if data['error'] in ['unauthorized', 'invalid_client']:
                 raise Exception(data['error_description'])
-        self.token = data['access_token']
-        self.token_type = data['token_type']
-        self.expires_in = data['expires_in']
-        self.valid_until = time.time() + data['expires_in']
-        self.scope = data['scope']
+        if 'access_token' in data:
+            self.token = data['access_token']
+            self.token_type = data['token_type']
+            self.expires_in = data['expires_in']
+            self.valid_until = time.time() + data['expires_in']
+            self.scope = data['scope']
+        else:
+            Exception('MarketoClient: unrecognized Authorize response: {}'.format(data))
 
     # --------- LEADS ---------
 
