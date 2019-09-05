@@ -15,7 +15,7 @@ class HttpLib:
         if self.logbook_logger:
             self.logbook_logger.error(message)
         else:
-            print message
+            print(message)
 
 
     def get(self, endpoint, args=None, mode=None):
