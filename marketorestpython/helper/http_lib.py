@@ -101,7 +101,7 @@ class HttpLib:
             except requests.exceptions.RequestException as e:
                 if retries < self.max_retries:
                     self.error_log(u"Retrying after exception: {}: {}".format(type(e).__name__,
-                                                                              e.message if e.message else str(e)))
+                                                                              e.message if hasattr(e, 'message') and e.message else str(e)))
                     time.sleep(self.sleep_duration * (retries * 6 - 5))
                 else:
                     raise e
