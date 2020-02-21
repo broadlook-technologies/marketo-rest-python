@@ -68,11 +68,14 @@ class HttpLib:
                         r_json = r.json()
                     except ValueError:  # case when request is failed with bad status code (like 502, 413, etc...)
                         self.error_log('error from http_lib.py: ' + r.text)
+                        error_message = r.text
+                        if r.status_code == 502:
+                            error_message = 'Marketo instance is unavailable'
                         return {
                             'success': False,
                             'errors': [{
                                 'code': r.status_code,
-                                'message': r.text
+                                'message': error_message
                             }]
                         }
                     else:
