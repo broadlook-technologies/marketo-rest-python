@@ -7,7 +7,7 @@ from requests.models import PreparedRequest
 
 class HttpLib:
     max_retries = 3
-    sleep_duration = 10
+    sleep_duration = 20
     def __init__(self, logbook_logger = None):
         self.logbook_logger = logbook_logger
 
