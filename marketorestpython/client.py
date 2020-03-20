@@ -47,8 +47,8 @@ class MarketoClient:
         result = getattr(request, method)(endpoint, *args, **kwargs)
         self.API_CALLS_MADE += 1
         if self.API_LIMIT and self.API_CALLS_MADE >= self.API_LIMIT:
-            raise Exception({'message': '# of API Calls exceeded the limit as specified in the Python script: '
-                                        + str(self.API_LIMIT), 'code': '416'})
+            raise MarketoException({'message': '# of API Calls exceeded the limit as specified in the Python script: '
+                                               + str(self.API_LIMIT), 'code': '416'})
         return result
 
     def execute(self, method, *args, **kargs):
@@ -257,7 +257,7 @@ class MarketoClient:
                     self.authenticate()
                     continue
                 else:
-                    raise Exception({'message':e.message, 'code':e.code})
+                    raise MarketoException({'message':e.message, 'code':e.code})
             break
         return result
 
