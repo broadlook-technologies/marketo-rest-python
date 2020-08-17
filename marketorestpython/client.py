@@ -35,7 +35,6 @@ class MarketoClient:
         self.partner_id = partner_id
         self.API_CALLS_MADE = 0
         self.API_LIMIT = api_limit
-
         self.logbook_logger = logbook_logger
 
     def _check_rate_limit(self):
