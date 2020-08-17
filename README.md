@@ -38,14 +38,10 @@ munchkin_id = "" # fill in Munchkin ID, typical format 000-AAA-000
 client_id = "" # enter Client ID from Admin > LaunchPoint > View Details
 client_secret= "" # enter Client ID and Secret from Admin > LaunchPoint > View Details
 api_limit=None
-max_retry_time=None
-mc = MarketoClient(munchkin_id, client_id, client_secret, api_limit, max_retry_time)
+mc = MarketoClient(munchkin_id, client_id, client_secret, api_limit)
 
-# 'api_limit' and 'max_retry_time' are optional;
+# 'api_limit' are optional;
 # 'api_limit' limits the number of Marketo API calls made by this instance of MarketoClient
-# 'max_retry_time' defaults to 300 and sets the time in seconds to retry failed API calls that 
-#   are retryable; if it still fails after the configured time period, it will throw a 
-#   MarketoException
 ```
 Then use mc.execute(method='') to call the various methods (see documentation below) 
 
