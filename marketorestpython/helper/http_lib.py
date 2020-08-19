@@ -21,17 +21,29 @@ class HttpLib:
         else:
             print(message)
 
-    def get(self, endpoint, args=None, mode=None, timeout=None, stream=False):
-        return self._request('GET', endpoint, args, mode, timeout, stream=stream)
+    def get(self, endpoint, args=None, mode=None, headers=None, timeout=None, stream=False):
+        return self._request('GET', endpoint, args, mode, headers, timeout, stream=stream)
 
-    def post(self, endpoint, args, data=None, files=None, filename=None, mode=None, timeout=None, stream=False):
-        return self._request('POST', endpoint, args, mode, timeout, data, files, filename, stream=stream)
+    def post(self, endpoint, args, data=None, files=None, filename=None, mode=None, headers=None, timeout=None,
+             stream=False):
+        return self._request('POST', endpoint, args, mode, headers, timeout, data, files, filename, stream=stream)
 
-    def delete(self, endpoint, args, data, timeout=None):
-        return self._request('DELETE', endpoint, args, None, timeout, data)
+    def delete(self, endpoint, args, data, headers=None, timeout=None):
+        return self._request('DELETE', endpoint, args, None, headers, timeout, data)
 
-    def _request(self, method, endpoint, args=None, mode=None, timeout=None, data=None, files=None, filename=None,
-                 stream=False):
+    def _request(self, method, endpoint, args=None, mode=None, headers=None, timeout=None, data=None, files=None,
+                 filename=None, stream=False):
+        headers = headers or {}
+        headers['Accept-Encoding'] = 'gzip'
+
+        if method == 'POST':
+            if mode == 'nojsondumps':
+                headers['Content-type'] = 'application/x-www-form-urlencoded; charset=utf-8'
+            elif files is None:
+                headers['Content-type'] = 'application/json; charset=utf-8'
+        elif method == 'DELETE':
+            headers['Content-type'] = 'application/json; charset=utf-8'
+
         retries = 1
         while True:
             if retries > self.max_retries:
@@ -43,17 +55,14 @@ class HttpLib:
 
                 if method == 'POST':
                     if mode == 'nojsondumps':
-                        headers['Content-type'] = 'application/x-www-form-urlencoded; charset=utf-8'
                         r = requests.post(endpoint, params=args, data=data, headers=headers, timeout=timeout)
                     elif files is None:
-                        headers['Content-type'] = 'application/json; charset=utf-8'
                         r = requests.post(endpoint, params=args, json=data, headers=headers, timeout=timeout)
                     else:
                         mimetype = mimetypes.guess_type(files)[0]
                         file = {filename: (files, open(files, 'rb'), mimetype)}
                         r = requests.post(endpoint, params=args, json=data, files=file, timeout=timeout)
                 elif method == 'DELETE':
-                    headers['Content-type'] = 'application/json; charset=utf-8'
                     r = requests.delete(endpoint, params=args, json=data, headers=headers, timeout=timeout)
                 else:
                     if len(pr.url) > 7000:
