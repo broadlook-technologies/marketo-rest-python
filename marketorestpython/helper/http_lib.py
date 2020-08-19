@@ -62,8 +62,9 @@ class HttpLib:
                     else:
                         r = requests.get(endpoint, params=args, headers=headers, timeout=timeout, stream=stream)
 
-                requests_log = logging.getLogger("requests.packages.urllib3")
-                requests_log.debug('content: %s', r.content)
+                if not stream:
+                    requests_log = logging.getLogger("requests.packages.urllib3")
+                    requests_log.debug('content: %s', r.content)
 
                 if mode == 'nojson':
                     return r
