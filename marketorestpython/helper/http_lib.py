@@ -49,7 +49,6 @@ class HttpLib:
             if retries > self.max_retries:
                 return None
             try:
-                headers = {'Accept-Encoding': 'gzip'}
                 pr = PreparedRequest()
                 pr.prepare_url(endpoint, args)
 
